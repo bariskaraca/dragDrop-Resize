@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag&Drop</title>
+    <script src="DragDrop.js"></script>
+    <script src="Resize.js"></script>
+    <style>
+        .parent{
+            left: 0;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background-color: green;
+            position: fixed;
+        }
+        .target {
+            position: fixed;
+            left: 500px;
+            top: 10px;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            cursor: move;
+            background-color: gray;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .cloned {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            cursor: move;
+            background-color: rebeccapurple;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .target>*,.cloned>*{
+            vertical-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="parent"></div>
+<div class="target resizable"><span>Draggable</span></div>
+
+
+<script>
+    let cloneddragdrop=new DragDrop(
+        {
+            dragSelector:".cloned",
+            dropSelector: ".parent",
+            clone: false,
+            revert: false,
+            direction: false // vertical && horizontal
+        },
+        function (el, newPos, oldPos, mousePos, onDropZone) { //ondrag
+            // console.log(newPos,oldPos,mousePos)
+        },
+        function (el, newPos, oldPos, mousePos, success) { //ondrop
+            // console.log(newPos,oldPos,mousePos, success)
+        });
+    let dragdrop = new DragDrop(
+        {
+            dragSelector:".target",
+            dropSelector: ".parent",
+            clone: true,
+            revert: true,
+            direction: false
+        },
+        function (el, newPos, oldPos, mousePos, onDropZone) { //ondrag
+        },
+        function (el, newPos, oldPos, mousePos, onDropZone) { //ondrop
+            console.log(el, newPos, oldPos, mousePos, onDropZone)
+            if(onDropZone) {
+                let arr = el.className.split(" ");
+                if (arr.indexOf("cloned") === -1) {
+                    el.className += " cloned";
+                }
+                el.className = el.className.replace(new RegExp('(?:^|\\s)' + 'my_target' + '(?:\\s|$)'), ' ');
+                // dragdrop.reInit();
+                cloneddragdrop.reInit();
+                resize.reInit();
+            }
+        }
+    );
+    let resize=new Resize(
+        {
+            selector:".resizable", // target element
+            sides: ["left", "right", "bottom", "top"], // sides that resizable
+            // minWidth: 50,
+            // maxWidth: 300,
+            // minHeight: 50,
+            // maxHeight: 300
+
+        },
+        function (el, side, newPos, oldPos, mousePos) { //onresize
+            console.log(side, newPos,oldPos,mousePos)
+            el.style.lineHeight = newPos.height;
+        },
+        function (el, side, newPos, oldPos, mousePos) { //onresizedone
+            console.log(side, newPos, oldPos, mousePos);
+            // resize.revert(el,side,oldPos);
+            // el.style.lineHeight = oldPos.height;
+            // resize.remove();
+            // resize.stop();
+            // resize.start();
+        }
+    );
+</script>
+
+
+</body>
+</html>
